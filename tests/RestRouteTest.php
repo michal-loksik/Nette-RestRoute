@@ -129,6 +129,24 @@ class RestRouteTest extends \PHPUnit_Framework_TestCase {
     ];
   }
 
+  public function testMatchAndConstructPresenterInUppercase() {
+    $route = new RestRoute('Apiplatform');
+
+    $url = (new UrlScript('http://localhost'))->withPath('/apiplatform/ACAPStorage', '/');
+    $request = new Request($url, NULL, NULL, NULL, NULL, 'GET');
+
+    $params = $route->match($request);
+
+    $expectedPresenterName = 'Apiplatform:ACAPStorage';
+    $this->assertEquals($expectedPresenterName, $params[RestRoute::KEY_PRESENTER]);
+
+    $refUrl = new UrlScript('http://localhost');
+    $url = $route->constructUrl($params, $refUrl);
+
+    $expectedUrl = 'http://localhost/apiplatform/ACAPStorage';
+    $this->assertEquals($expectedUrl, $url);
+  }
+
   /**
    * @dataProvider getVersions
    */

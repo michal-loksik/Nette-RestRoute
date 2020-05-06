@@ -134,7 +134,14 @@ class RestRoute implements \Nette\Routing\Router {
     } elseif ($params['action'] === 'read') {
       $params['action'] = 'readAll';
     }
-    $presenterName = Inflector::studlyCase(array_pop($frags));
+
+    $lastFrag = array_pop($frags);
+
+    if (!preg_match('/[A-Z]{2,}\w/', $lastFrag)) {
+      $presenterName = Inflector::studlyCase($lastFrag);
+    } else {
+      $presenterName = $lastFrag;
+    }
 
     // Allow to use URLs like domain.tld/presenter.format.
     $formats = join('|', array_keys($this->formats));
@@ -260,9 +267,18 @@ class RestRoute implements \Nette\Routing\Router {
 
     // Module prefix.
     $moduleFrags = explode(":", $params[self::KEY_PRESENTER]);
-    $moduleFrags = array_map('\AdamStipak\Support\Inflector::spinalCase', $moduleFrags);
-    $resourceName = array_pop($moduleFrags);
-    $urlStack += $moduleFrags;
+    $newModuleFrags = [];
+
+    foreach ($moduleFrags as $frag) {
+      if (!preg_match('/[A-Z]{2,}\w/', $frag)) {
+        $frag = Inflector::spinalCase($frag);
+      }
+
+      $newModuleFrags[] = $frag;
+    }
+
+    $resourceName = array_pop($newModuleFrags);
+    $urlStack += $newModuleFrags;
 
     // Associations.
     if (isset($params[self::KEY_ASSOCIATIONS]) && Validators::is($params[self::KEY_ASSOCIATIONS], 'array')) {
