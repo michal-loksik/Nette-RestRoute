@@ -137,10 +137,14 @@ class RestRoute implements \Nette\Routing\Router {
 
     $lastFrag = array_pop($frags);
 
-    if (!preg_match('/[A-Z]{2,}\w/', $lastFrag)) {
+    if (!preg_match('/[A-Z]{2,}\w/', $lastFrag) && !preg_match('/(.*[A-Z].*)/', $lastFrag)) {
       $presenterName = Inflector::studlyCase($lastFrag);
     } else {
       $presenterName = $lastFrag;
+
+      if (preg_match('/(.*[A-Z].*)/', $lastFrag)) {
+        $presenterName = ucfirst($presenterName);
+      }
     }
 
     // Allow to use URLs like domain.tld/presenter.format.

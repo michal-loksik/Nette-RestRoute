@@ -147,6 +147,18 @@ class RestRouteTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($expectedUrl, $url);
   }
 
+  public function testMatchAndConstructPresenterInUppercase2() {
+    $route = new RestRoute('Apiplatform');
+
+    $url = (new UrlScript('http://localhost'))->withPath('/apiplatform/ownerBillingData', '/');
+    $request = new Request($url, NULL, NULL, NULL, NULL, 'GET');
+
+    $params = $route->match($request);
+
+    $expectedPresenterName = 'Apiplatform:OwnerBillingData';
+    $this->assertEquals($expectedPresenterName, $params[RestRoute::KEY_PRESENTER]);
+  }
+
   /**
    * @dataProvider getVersions
    */
